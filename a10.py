@@ -7,6 +7,17 @@ from typing import List, Callable, Tuple, Any, Match
 
 
 def get_page_html(title: str) -> str:
+    search_response = requests.get(
+        "https://en.wikipedia.org/w/api.php",
+        params={"action": "query", "list": "search", "srsearch": title, "format": "json"},
+        headers={"User-Agent": "intro-ai-class/1.0"},
+        timeout=10
+    )
+    results = search_response.json().get("query", {}).get("search", [])
+    if results:
+        title = results[0]["title"]  # use the top search result title
+        print(f"Searching Wikipedia for: {title}")
+    
     for attempt in range(5):
         response = requests.get(
             "https://en.wikipedia.org/w/api.php",
