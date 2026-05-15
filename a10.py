@@ -1,6 +1,4 @@
 import re, string, calendar, requests, time
-from wikipedia import WikipediaPage
-import wikipedia
 from bs4 import BeautifulSoup
 from match import match
 from typing import List, Callable, Tuple, Any, Match
@@ -144,7 +142,8 @@ def get_death_date(name: str) -> str:
 def get_population(place: str) -> str:
     """Gets population of a city/country from its infobox"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(place)))
-    pattern = r"Population(?:[^0-9]+)(?P<pop>[0-9,]+)"
+    print(infobox_text)
+    pattern = r"(?:Population).*(?:City|State capital)(?P<pop>[0-9,]+)"
     error_text = "Page infobox has no population information"
     match = get_match(infobox_text, pattern, error_text)
     return match.group("pop")
@@ -152,10 +151,12 @@ def get_population(place: str) -> str:
 def get_capital_city(country: str) -> str:
     """Gets the capital city of a country from its infobox"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(country)))
-    pattern = r"Capital(?:[^A-Za-z]+)(?P<cap>[A-Za-z ,]+)"
+    print(infobox_text)
+    pattern = r"Capital(?:and largest city)?\s*(?P<cap>[A-Z][a-zA-Z\s]+)"
     error_text = "Page infobox has no capital city information"
     match = get_match(infobox_text, pattern, error_text)
     return match.group("cap").strip()
+
 
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
