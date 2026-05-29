@@ -157,6 +157,102 @@ def get_capital_city(country: str) -> str:
     match = get_match(infobox_text, pattern, error_text)
     return match.group("cap").strip()
 
+def get_age(name: str) -> str:
+    """Gets the age of the given person"""
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    print(infobox_text)
+    # Matches: (age 33)
+    pattern = r"\(age\s*(?P<age>\d{1,3})\)"
+    error_text = "Page infobox has no age information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("age")
+
+def get_origin(name: str) -> str:
+    """Gets the place of birth or origin of the given person"""
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    print(infobox_text)
+    # After "(age XX)" capture something like "Medell n, Colombia"
+    pattern = r"\(age\s*\d{1,3}\)[^\n]*?(?P<origin>[A-Z][A-Za-z n'.-]+,\s*[A-Z][A-Za-z n'.-]+)"
+    error_text = "Page infobox has no origin/birthplace information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("origin").strip()
+
+def get_genre(item: str) -> str:
+    """Gets the musical genre of an album or artist"""
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(item)))
+    print(infobox_text)
+
+    pattern = r"Genre[s]?\s*(?P<genre>[A-Za-z /,\-]+)"
+    error_text = "Page infobox has no genre information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("genre").strip()
+
+def get_occupation(name: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"Occupation[s]?\s*(?P<occ>[A-Za-z ,/.\-]+)"
+    error_text = "Page infobox has no occupation information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("occ").strip()
+
+def get_release_date(item: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(item)))
+    pattern = r"Released\s*(?P<date>[A-Za-z0-9 ,]+)"
+    error_text = "Page infobox has no release date information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("date").strip()
+
+def get_album_length(item: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(item)))
+    pattern = r"Length\s*(?P<length>[0-9:]+)"
+    error_text = "Page infobox has no length information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("length").strip()
+
+def get_label(item: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(item)))
+    pattern = r"Label[s]?\s*(?P<label>[A-Za-z0-9 ,/.\-]+)"
+    error_text = "Page infobox has no label information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("label").strip()
+
+def get_relationship(name: str) -> str:
+    "gets the given person's spouse"
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"(?:Spouse|Partner|Domestic partner)s?\s*(?P<rel>[A-Za-z .'\-]+)"
+    error_text = "Page infobox has no relationship information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("rel").strip()
+
+def get_education(name: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
+    pattern = r"(?:Education|Alma mater|School[s]?)\s*(?P<edu>[A-Za-z0-9 ,.'\-()]+)"
+    error_text = "Page infobox has no education information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("edu").strip()
+    print(infobox_text)
+
+def get_num_seasons(show: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(show)))
+    pattern = r"(?:No\. of seasons|Number of seasons|Seasons)\s*(?P<seasons>\d+)"
+    error_text = "Page infobox has no season information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("seasons").strip()
+
+def get_show_release(show: str) -> str:
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(show)))
+    print(infobox_text)
+    pattern = r"(?:Original release|First aired|Original run)\s*(?P<date>[A-Za-z0-9 ,–\-]+)"
+    error_text = "Page infobox has no release date information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("date").strip()
+
+def get_creator(show: str) -> str:
+    "gets the creator of a tv show"
+    infobox_text = clean_text(get_first_infobox_text(get_page_html(show)))
+    pattern = r"(?:Created by|Creator|Developed by)\s*(?P<creator>[A-Za-z0-9 ,.'\-()]+)"
+    error_text = "Page infobox has no creator information"
+    match = get_match(infobox_text, pattern, error_text)
+    return match.group("creator").strip()
 
 # below are a set of actions. Each takes a list argument and returns a list of answers
 # according to the action and the argument. It is important that each function returns a
@@ -195,6 +291,41 @@ def population(matches: List[str]) -> List[str]:
 def capital_city(matches: List[str]) -> List[str]:
     return [get_capital_city(" ".join(matches))]
 
+def age_action(matches: List[str]) -> List[str]:
+    return [get_age(" ".join(matches))]
+
+def origin_action(matches: List[str]) -> List[str]:
+    return [get_origin(" ".join(matches))]
+
+def genre_action(matches: List[str]) -> List[str]:
+    return [get_genre(" ".join(matches))]
+
+def occupation_action(matches: List[str]) -> List[str]:
+    return [get_occupation(" ".join(matches))]
+
+def release_date_action(matches: List[str]) -> List[str]:
+    return [get_release_date(" ".join(matches))]
+
+def album_length_action(matches: List[str]) -> List[str]:
+    return [get_album_length(" ".join(matches))]
+
+def label_action(matches: List[str]) -> List[str]:
+    return [get_label(" ".join(matches))]
+
+def relationship_action(matches: List[str]) -> List[str]:
+    return [get_relationship(" ".join(matches))]
+
+def education_action(matches: List[str]) -> List[str]:
+    return [get_education(" ".join(matches))]
+
+def seasons_action(matches: List[str]) -> List[str]:
+    return [get_num_seasons(" ".join(matches))]
+
+def show_release_action(matches: List[str]) -> List[str]:
+    return [get_show_release(" ".join(matches))]
+
+def creator_action(matches: List[str]) -> List[str]:
+    return [get_creator(" ".join(matches))]
 
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
@@ -211,11 +342,25 @@ Action = Callable[[List[str]], List[Any]]
 pa_list: List[Tuple[Pattern, Action]] = [
     ("when was % born".split(), birth_date),
     ("what is the polar radius of %".split(), polar_radius),
-
-    # NEW FEATURES
     ("when did % die".split(), death_date),
     ("what is the population of %".split(), population),
     ("what is the capital of %".split(), capital_city),
+
+
+    # NEW FEATURES    
+    ("how old is %".split(), age_action),
+    ("where was % born".split(), origin_action),
+    ("what is the genre of %".split(), genre_action),
+    ("what is the occupation of %".split(), occupation_action),
+    ("when was % released".split(), release_date_action),
+    ("what is the length of %".split(), album_length_action),
+    ("what is the label of %".split(), label_action),
+    ("who is % dating".split(), relationship_action),
+    ("who is % married to".split(), relationship_action),
+    ("what school did % go to".split(), education_action),
+    ("how many seasons does % have".split(), seasons_action),
+    ("when did % come out".split(), show_release_action),
+    ("who created %".split(), creator_action),
 
     (["bye"], bye_action),
 ]
