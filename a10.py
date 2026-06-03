@@ -160,7 +160,6 @@ def get_capital_city(country: str) -> str:
 def get_age(name: str) -> str:
     """Gets the age of the given person"""
     infobox_text = clean_text(get_first_infobox_text(get_page_html(name)))
-    print(infobox_text)
     # Matches: (age 33)
     pattern = r"\(age\s*(?P<age>\d{1,3})\)"
     error_text = "Page infobox has no age information"
